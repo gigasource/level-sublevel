@@ -94,13 +94,12 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     })
   }
 
-  emitter.get = function (key, opts, cb) {
-    if('function' === typeof opts)
-      cb = opts, opts = {}
-    nut.get(key, prefix, mergeOpts(opts), function (err, value) {
-      if(err) cb(new errors.NotFoundError('Key not found in database', err))
-      else cb(null, value)
-    })
+  emitter.get = function (key, opts = {}) {
+    return nut.get(key, prefix, mergeOpts(opts))
+  }
+
+  emitter.getMany = function (keys, opts = {}) {
+    return nut.getMany(keys, prefix, mergeOpts(opts))
   }
 
   emitter.clone = function(opts) {

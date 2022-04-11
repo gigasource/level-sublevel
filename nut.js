@@ -79,7 +79,7 @@ module.exports = function (db, precodec, codec, compare) {
 
       opts = opts || {}
 
-      if('object' !== typeof opts) throw new Error('opts must be object, was:'+ opts) 
+      if('object' !== typeof opts) throw new Error('opts must be object, was:'+ opts)
 
       if('function' === typeof opts) cb = opts, opts = {}
 
@@ -112,15 +112,19 @@ module.exports = function (db, precodec, codec, compare) {
       else
         cb()
     },
-    get: function (key, prefix, opts, cb) {
+    get: function (key, prefix, opts) {
       opts.asBuffer = codec.valueAsBuffer(opts)
       return (db.db || db).get(
         encodePrefix(prefix, key, opts),
-        opts,
-        function (err, value) {
-          if(err) cb(err)
-          else    cb(null, codec.decodeValue(value, opts))
-        }
+        opts
+      )
+    },
+    getMany: function (keys, prefix, opts) {
+      opts.asBuffer = codec.valueAsBuffer(opts)
+      keys = keys.map(key => encodePrefix(prefix, key, opts))
+      return (db.db || db).getMany(
+        keys,
+        opts
       )
     },
     pre: prehooks.add,
