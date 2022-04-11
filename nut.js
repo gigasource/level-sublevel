@@ -112,11 +112,15 @@ module.exports = function (db, precodec, codec, compare) {
       else
         cb()
     },
-    get: function (key, prefix, opts) {
+    get: function (key, prefix, opts, cb) {
       opts.asBuffer = codec.valueAsBuffer(opts)
       return (db.db || db).get(
         encodePrefix(prefix, key, opts),
-        opts
+        opts,
+        function (err, value) {
+          if(err) cb(err)
+          else    cb(null, codec.decodeValue(value, opts))
+        }
       )
     },
     getMany: function (keys, prefix, opts) {
